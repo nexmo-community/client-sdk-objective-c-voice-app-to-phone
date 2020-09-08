@@ -79,23 +79,27 @@
 }
 
 - (void)client:(nonnull NXMClient *)client didChangeConnectionStatus:(NXMConnectionStatus)status reason:(NXMConnectionStatusReason)reason {
-    switch (status) {
-        case NXMConnectionStatusConnected:
-            [self.callButton setAlpha:1];
-            self.connectionStatusLabel.text = @"Connected";
-            break;
-        case NXMConnectionStatusConnecting:
-            self.connectionStatusLabel.text = @"Connecting";
-            break;
-        case NXMConnectionStatusDisconnected:
-            self.connectionStatusLabel.text = @"Disconnected";
-            break;
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        switch (status) {
+            case NXMConnectionStatusConnected:
+                [self.callButton setAlpha:1];
+                self.connectionStatusLabel.text = @"Connected";
+                break;
+            case NXMConnectionStatusConnecting:
+                self.connectionStatusLabel.text = @"Connecting";
+                break;
+            case NXMConnectionStatusDisconnected:
+                self.connectionStatusLabel.text = @"Disconnected";
+                break;
+        }
+    });
 }
 
 - (void)client:(nonnull NXMClient *)client didReceiveError:(nonnull NSError *)error {
-    self.connectionStatusLabel.text = error.localizedDescription;
-    [self.callButton setAlpha:0];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.connectionStatusLabel.text = error.localizedDescription;
+        [self.callButton setAlpha:0];
+    });
 }
 
 
